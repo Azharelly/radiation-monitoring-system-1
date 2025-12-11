@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS radiation_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sensor_id VARCHAR(50) NOT NULL,
+    radiation_level FLOAT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);

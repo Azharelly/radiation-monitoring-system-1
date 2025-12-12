@@ -1,30 +1,51 @@
+import os
 from flask import Flask, request, jsonify
+import mysql.connector
+from mysql.connector import Error
 
 app = Flask(__name__)
 
-# Route raíz: confirma que la app está viva
+# ------------------------
+# Helper: conectar a MySQL
+# ------------------------
+def get_db_connection():
+    try:
+        connection = mysql.connector.connect(
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
+        )
+        return connection
+    except Error as e:
+        print("Database connection error:", e)
+        return None
+
+
+# ------------------------
+# Rutas API
+# ------------------------
+
 @app.route("/")
 def home():
     return jsonify({"status": "Radiation Monitoring API is running"}), 200
 
-# GET /logs — ahora mismo devuelve datos falsos (mock)
+
+# Ahora estos endpoints siguen mock hasta que conectemos la DB
 @app.route("/logs", methods=["GET"])
 def get_logs():
-    sample_data = [
-        {"id": 1, "sensor_id": "A1", "radiation_level": 3.5, "timestamp": "2025-01-01 12:00:00"},
-        {"id": 2, "sensor_id": "B2", "radiation_level": 4.1, "timestamp": "2025-01-01 12:05:00"}
-    ]
-    return jsonify(sample_data), 200
+    return jsonify({"info": "Database connection not enabled yet"}), 200
 
-# POST /logs — ahora mismo solo recibe datos y devuelve OK
+
 @app.route("/logs", methods=["POST"])
 def create_log():
     data = request.get_json()
     return jsonify({
-        "message": "Log received (DB not connected yet)",
+        "message": "Log received (DB connection not enabled yet)",
         "data": data
     }), 201
 
-# Run locally (Compute Engine will run through Docker)
+
+# Ejecutar localmente
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)

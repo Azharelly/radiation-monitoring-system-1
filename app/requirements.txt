@@ -1,2 +1,4 @@
-Flask==3.0.0 (framework)
-gunicorn==20.1.0 (server for production)
+Flask==3.0.0
+gunicorn==20.1.0
+mysql-connector-python==8.2.0
+python-dotenv==1.0.1

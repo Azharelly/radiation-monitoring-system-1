@@ -86,7 +86,7 @@ def get_logs():
 
     return jsonify(logs), 200
 
-    @app.route("/form", methods=["GET"])
+@app.route("/form", methods=["GET"])
 def form_page():
     return render_template("form.html")
 

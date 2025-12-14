@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import mysql.connector
 from mysql.connector import Error
 
@@ -21,31 +21,71 @@ def get_db_connection():
         print("Database connection error:", e)
         return None
 
-
 # ------------------------
-# Rutas API
+# Health check (API)
 # ------------------------
-
 @app.route("/")
-def home():
-    return jsonify({"status": "Radiation Monitoring API is running"}), 200
+def health():
+    return {"status": "Radiation Monitoring API is running"}
 
+# ------------------------
+# Frontend pages
+# ------------------------
+@app.route("/log", methods=["GET"])
+def log_page():
+    return render_template("log.html")
 
-# Ahora estos endpoints siguen mock hasta que conectemos la DB
-@app.route("/logs", methods=["GET"])
-def get_logs():
-    return jsonify({"info": "Database connection not enabled yet"}), 200
+@app.route("/history", methods=["GET"])
+def history_page():
+    return render_template("history.html")
 
-
-@app.route("/logs", methods=["POST"])
+# ------------------------
+# API endpoints
+# ------------------------
+@app.route("/api/logs", methods=["POST"])
 def create_log():
-    data = request.get_json()
-    return jsonify({
-        "message": "Log received (DB connection not enabled yet)",
-        "data": data
-    }), 201
+    data = request.form or request.get_json()
 
+    radiation_level = data.get("radiation_level")
+    sensor_id = data.get("sensor_id")
 
-# Ejecutar localmente
+    if not radiation_level or not sensor_id:
+        return jsonify({"error": "Missing data"}), 400
+
+    connection = get_db_connection()
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        cursor = connection.cursor()
+        query = """
+            INSERT INTO radiation_logs (sensor_id, radiation_level)
+            VALUES (%s, %s)
+        """
+        cursor.execute(query, (sensor_id, radiation_level))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({"message": "Log saved"}), 201
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/logs", methods=["GET"])
+def get_logs():
+    connection = get_db_connection()
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM radiation_logs ORDER BY timestamp DESC")
+    logs = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    return jsonify(logs), 200
+
+# ------------------------
+# Run locally
+# ------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)

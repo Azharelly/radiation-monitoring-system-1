@@ -2,6 +2,8 @@ import os
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
 from mysql.connector import Error
+from flask import render_template
+
 
 app = Flask(__name__)
 
@@ -83,6 +85,11 @@ def get_logs():
     connection.close()
 
     return jsonify(logs), 200
+
+    @app.route("/form", methods=["GET"])
+def form_page():
+    return render_template("form.html")
+
 
 # ------------------------
 # Run locally

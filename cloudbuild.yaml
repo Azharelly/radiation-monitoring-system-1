@@ -7,3 +7,5 @@ steps:
 
 images:
   - 'europe-west1-docker.pkg.dev/radiation-monitoring-system-ca/radiation-docker-repo/radiation-monitoring-app:latest'
+options:
+  logging: CLOUD_LOGGING_ONLY

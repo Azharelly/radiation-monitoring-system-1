@@ -5,6 +5,11 @@ set -e
 apt-get update
 apt-get install -y docker.io jq
 
+systemctl start docker
+systemctl enable docker 
+
+gcloud auth configure-docker europe-west1-docker.pkg.dev -q
+
 # Get secrets from Secret Manager
 DB_HOST=$(gcloud secrets versions access latest --secret=DB_HOST)
 DB_NAME=$(gcloud secrets versions access latest --secret=DB_NAME)

@@ -23,4 +23,4 @@ COPY app/ .
 EXPOSE 8080
 
 # Comando de arranque (producción)
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app.main:app"]

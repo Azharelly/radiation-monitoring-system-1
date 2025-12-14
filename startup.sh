@@ -11,10 +11,10 @@ systemctl enable docker
 gcloud auth configure-docker europe-west1-docker.pkg.dev -q
 
 # Get secrets from Secret Manager
-DB_HOST=$(gcloud secrets versions access latest --secret=DB_HOST)
-DB_NAME=$(gcloud secrets versions access latest --secret=DB_NAME)
-DB_USER=$(gcloud secrets versions access latest --secret=DB_USER)
-DB_PASSWORD=$(gcloud secrets versions access latest --secret=DB_PASSWORD)
+export DB_HOST=$(gcloud secrets versions access latest --secret=DB_HOST)
+export DB_NAME=$(gcloud secrets versions access latest --secret=DB_NAME)
+export DB_USER=$(gcloud secrets versions access latest --secret=DB_USER)
+export DB_PASSWORD=$(gcloud secrets versions access latest --secret=DB_PASSWORD)
 
 # Pull image from Artifact Registry
 docker pull europe-west1-docker.pkg.dev/radiation-monitoring-system-ca/radiation-docker-repo/radiation-monitoring-app:latest

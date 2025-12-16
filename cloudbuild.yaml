@@ -4,6 +4,17 @@ steps:
 
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'europe-west1-docker.pkg.dev/radiation-monitoring-system-ca/radiation-docker-repo/radiation-monitoring-app:latest']
+  
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+    - compute
+    - ssh
+    - radiation-vm
+    - --zone=europe-west1-b
+    - --command=
+        docker pull europe-west1-docker.pkg.dev/...:latest &&
+        docker rm -f radiation-api || true &&
+        docker run -d -p 8080:8080 --env-file /path/.env --name radiation-api ...
 
 images:
   - 'europe-west1-docker.pkg.dev/radiation-monitoring-system-ca/radiation-docker-repo/radiation-monitoring-app:latest'

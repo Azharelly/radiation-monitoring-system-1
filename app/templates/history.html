@@ -7,6 +7,8 @@
 
 <h1>Radiation History</h1>
 
+<p id="status">Loading records...</p>
+
 <table border="1" cellpadding="8">
     <thead>
         <tr>
@@ -15,29 +17,43 @@
             <th>Timestamp</th>
         </tr>
     </thead>
-    <tbody id="history-table">
-    </tbody>
+    <tbody id="history-table"></tbody>
 </table>
 
 <script>
 async function loadHistory() {
-    const response = await fetch("/api/logs");
-    const data = await response.json();
+    try {
+        const response = await fetch("/api/logs");
+        const data = await response.json();
 
-    const table = document.getElementById("history-table");
-    table.innerHTML = "";
+        const table = document.getElementById("history-table");
+        const status = document.getElementById("status");
 
-    data.forEach(log => {
-        const row = document.createElement("tr");
+        table.innerHTML = "";
 
-        row.innerHTML = `
-            <td>${log.sensor_id}</td>
-            <td>${log.radiation_level}</td>
-            <td>${log.timestamp}</td>
-        `;
+        if (data.length === 0) {
+            status.innerText = "No records yet.";
+            return;
+        }
 
-        table.appendChild(row);
-    });
+        status.innerText = "";
+
+        data.forEach(log => {
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${log.sensor_id}</td>
+                <td>${log.radiation_level}</td>
+                <td>${log.timestamp}</td>
+            `;
+
+            table.appendChild(row);
+        });
+
+    } catch (error) {
+        document.getElementById("status").innerText = "Error loading data.";
+        console.error(error);
+    }
 }
 
 loadHistory();
@@ -45,4 +61,3 @@ loadHistory();
 
 </body>
 </html>
-

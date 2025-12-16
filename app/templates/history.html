@@ -1,11 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Radiation History</title>
 </head>
 <body>
-    <h2>Radiation History</h2>
-    <p>No records yet.</p>
+
+<h1>Radiation History</h1>
+
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>Sensor ID</th>
+            <th>Radiation Level</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody id="history-table">
+    </tbody>
+</table>
+
+<script>
+async function loadHistory() {
+    const response = await fetch("/api/logs");
+    const data = await response.json();
+
+    const table = document.getElementById("history-table");
+    table.innerHTML = "";
+
+    data.forEach(log => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${log.sensor_id}</td>
+            <td>${log.radiation_level}</td>
+            <td>${log.timestamp}</td>
+        `;
+
+        table.appendChild(row);
+    });
+}
+
+loadHistory();
+</script>
+
 </body>
 </html>
+
